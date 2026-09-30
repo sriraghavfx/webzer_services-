@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webzer Client Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/client.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <h2>WEBZER CLIENT PORTAL</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="client@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" value="client123" required>
+                </div>
+                <div id="loginError" class="error-message"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <div class="back-link">
+                <a href="index.html">← Back to Website</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Dashboard -->
+    <div id="clientDashboard" class="dashboard-layout" style="display: none;">
+        <!-- Left Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">WEBZER</h1>
+                <div class="client-info-mini">
+                    <span id="sidebarClientName">Rahul Kumar</span>
+                    <span id="sidebarClientEmail">rahul@example.com</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-target="page-dashboard">
+                    <span class="icon">🏠</span> Dashboard
+                </a>
+                <a href="#" class="nav-item" data-target="page-projects">
+                    <span class="icon">📁</span> My Projects
+                </a>
+                <a href="#" class="nav-item" data-target="page-messages">
+                    <span class="icon">💬</span> Messages
+                </a>
+                <a href="#" class="nav-item" data-target="page-invoices">
+                    <span class="icon">📄</span> Invoices
+                </a>
+                <a href="#" class="nav-item" data-target="page-profile">
+                    <span class="icon">👤</span> Profile
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button id="mobileMenuBtn" class="mobile-menu-btn">☰</button>
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="user-menu">
+                    <span class="user-name" id="topbarClientName">Rahul Kumar</span>
+                    <div class="avatar-circle" id="topbarAvatar">RK</div>
+                </div>
+            </header>
+
+            <!-- Dashboard Page -->
+            <section id="page-dashboard" class="page-section active">
+                <div class="welcome-section">
+                    <h2 id="welcomeMessage">Welcome back, Rahul Kumar!</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Active Projects</h3>
+                        <p class="stat-value" id="statActiveProjects">1</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending Invoices</h3>
+                        <p class="stat-value" id="statPendingInvoices">1</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Messages</h3>
+                        <p class="stat-value" id="statMessages">4</p>
+                    </div>
+                </div>
+
+                <div class="current-project-status">
+                    <h3>Current Project Status</h3>
+                    <div class="project-status-card" id="dashboardCurrentProject">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="recent-messages">
+                    <h3>Recent Messages</h3>
+                    <div class="messages-preview-list" id="dashboardMessagesPreview">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Projects Page -->
+            <section id="page-projects" class="page-section" style="display: none;">
+                <div class="projects-list" id="projectsList">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Messages Page -->
+            <section id="page-messages" class="page-section" style="display: none;">
+                <div class="chat-interface">
+                    <div class="chat-sidebar">
+                        <div class="contact-list">
+                            <div class="contact-item active">
+                                <div class="avatar-circle">W</div>
+                                <div class="contact-info">
+                                    <span class="contact-name">Webzer Support</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="chat-input-area">
+                            <form id="messageForm">
+                                <input type="text" id="messageInput" placeholder="Type a message..." required>
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoices Page -->
+            <section id="page-invoices" class="page-section" style="display: none;">
+                <div class="invoices-table-container">
+                    <table class="invoices-table">
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Project</th>
+                                <th>Amount (₹)</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoicesList">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Profile Page -->
+            <section id="page-profile" class="page-section" style="display: none;">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="avatar-circle large" id="profileAvatar">RK</div>
+                    </div>
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-group">
+                            <label for="profileName">Name</label>
+                            <input type="text" id="profileName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone</label>
+                            <input type="tel" id="profilePhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileCompany">Company Name</label>
+                            <input type="text" id="profileCompany">
+                        </div>
+                        
+                        <h3 class="section-title">Change Password</h3>
+                        <div class="form-group">
+                            <label for="profileNewPassword">New Password (leave blank to keep current)</label>
+                            <input type="password" id="profileNewPassword">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="projectModalContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Detail Modal -->
+    <div id="invoiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="invoiceModalContent">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/client.js"></script>
+</body>
+</html>
