@@ -37,26 +37,11 @@ function getStatusBadge(status) {
 
 // ── SEED DATA ──
 const DEFAULT_DATA = {
-    enquiries: [
-        { id: 1, name: 'Rahul Kumar', email: 'rahul@example.com', phone: '+91 98765 43210', service: 'Website Development', message: 'I need a professional website for my restaurant business. Looking for a modern design with online menu and reservation system.', date: '2026-09-28', status: 'new' },
-        { id: 2, name: 'Priya Sharma', email: 'priya@example.com', phone: '+91 87654 32109', service: 'Logo & Branding', message: 'Need a complete brand identity for my new fashion startup. Logo, color palette, and business cards.', date: '2026-09-27', status: 'read' },
-        { id: 3, name: 'Arun Patel', email: 'arun@example.com', phone: '+91 76543 21098', service: 'Landing Page', message: 'Want a high-converting landing page for my upcoming product launch. Need it within 2 weeks.', date: '2026-09-25', status: 'replied' },
-        { id: 4, name: 'Deepika Nair', email: 'deepika@example.com', phone: '+91 65432 10987', service: 'Web Design', message: 'Looking to redesign my existing portfolio website. Want a more modern and minimalist look.', date: '2026-09-24', status: 'new' },
-        { id: 5, name: 'Vikram Singh', email: 'vikram@example.com', phone: '+91 54321 09876', service: 'Digital Solutions', message: 'Need a complete digital solution for my retail business - website, WhatsApp integration, and basic SEO.', date: '2026-09-23', status: 'new' }
-    ],
-    projects: [
-        { id: 1, name: 'Restaurant Website', client: 'Rahul Kumar', status: 'progress', progress: 65, startDate: '2026-09-15', description: 'Modern restaurant website with online menu and reservation.' },
-        { id: 2, name: 'Fashion Brand Identity', client: 'Priya Sharma', status: 'progress', progress: 40, startDate: '2026-09-20', description: 'Complete brand identity including logo and guidelines.' },
-        { id: 3, name: 'Product Landing Page', client: 'Arun Patel', status: 'completed', progress: 100, startDate: '2026-09-10', description: 'High-converting landing page for product launch.' },
-        { id: 4, name: 'Portfolio Redesign', client: 'Deepika Nair', status: 'hold', progress: 20, startDate: '2026-09-22', description: 'Minimalist portfolio website redesign.' }
-    ],
-    clients: [
-        { id: 1, name: 'Rahul Kumar', email: 'rahul@example.com', phone: '+91 98765 43210', projects: 1, joinDate: '2026-09-15' },
-        { id: 2, name: 'Priya Sharma', email: 'priya@example.com', phone: '+91 87654 32109', projects: 1, joinDate: '2026-09-20' },
-        { id: 3, name: 'Arun Patel', email: 'arun@example.com', phone: '+91 76543 21098', projects: 1, joinDate: '2026-09-10' }
-    ],
+    enquiries: [],
+    projects: [],
+    clients: [],
     settings: {
-        companyName: 'Webzer',
+        companyName: 'WEBZER_SERVICES',
         email: 'yourmail@gmail.com',
         phone: '+91 00000 00000',
         instagram: '@webzer_services',
@@ -68,11 +53,15 @@ let appData = {};
 
 // ── INIT ──
 function initApp() {
-    // Seed data on first visit
-    if (!localStorage.getItem('webzer_admin_data')) {
+    // Force clear any old sample data and start fresh
+    if (!localStorage.getItem('webzer_data_cleared_v3')) {
         saveData(DEFAULT_DATA);
+        localStorage.setItem('webzer_data_cleared_v3', 'true');
     }
     appData = getData();
+    if (!appData.enquiries) appData.enquiries = [];
+    if (!appData.projects) appData.projects = [];
+    if (!appData.clients) appData.clients = [];
 
     // Auto-login check
     if (sessionStorage.getItem('webzer_admin_logged') === 'true') {
@@ -227,6 +216,18 @@ function setupEvents() {
         saveData(appData);
         alert('✅ Security & social settings saved!');
     });
+
+    // Clear all data button — matches HTML id="clearAllDataBtn"
+    document.getElementById('clearAllDataBtn')?.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete ALL enquiries, projects, and clients? This cannot be undone.')) {
+            appData.enquiries = [];
+            appData.projects = [];
+            appData.clients = [];
+            saveData(appData);
+            alert('✅ All enquiries, projects, and clients have been deleted.');
+            renderDashboard();
+        }
+    });
 }
 
 // ── SHOW / HIDE SCREENS ──
@@ -307,13 +308,17 @@ function renderDashboard() {
     if (tbody) {
         tbody.innerHTML = '';
         const recent = [...(appData.enquiries || [])].reverse().slice(0, 5);
-        recent.forEach(enq => {
-            tbody.innerHTML += `<tr>
-                <td>${enq.name}</td>
-                <td>${enq.service}</td>
-                <td>${getStatusBadge(enq.status)}</td>
-            </tr>`;
-        });
+        if (recent.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:1.75rem; color:#666666;">No enquiries yet</td></tr>';
+        } else {
+            recent.forEach(enq => {
+                tbody.innerHTML += `<tr>
+                    <td>${enq.name}</td>
+                    <td>${enq.service}</td>
+                    <td>${getStatusBadge(enq.status)}</td>
+                </tr>`;
+            });
+        }
     }
 
     // Recent projects list
@@ -321,12 +326,16 @@ function renderDashboard() {
     if (projList) {
         projList.innerHTML = '';
         const recentProj = [...(appData.projects || [])].slice(0, 4);
-        recentProj.forEach(proj => {
-            projList.innerHTML += `<li>
-                <span>${proj.name}</span>
-                ${getStatusBadge(proj.status)}
-            </li>`;
-        });
+        if (recentProj.length === 0) {
+            projList.innerHTML = '<li style="justify-content:center; color:#666666; padding:1.25rem 0;">No active projects</li>';
+        } else {
+            recentProj.forEach(proj => {
+                projList.innerHTML += `<li>
+                    <span>${proj.name}</span>
+                    ${getStatusBadge(proj.status)}
+                </li>`;
+            });
+        }
     }
 }
 
@@ -343,6 +352,11 @@ function renderEnquiries(filter) {
 
     if (filter && filter !== 'All') {
         list = list.filter(e => e.status === filter.toLowerCase());
+    }
+
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:3rem; color:#666666;">No enquiries found</td></tr>';
+        return;
     }
 
     list.forEach((enq, i) => {
@@ -409,7 +423,13 @@ function renderProjects() {
     if (!grid) return;
 
     grid.innerHTML = '';
-    (appData.projects || []).forEach(proj => {
+    const projs = appData.projects || [];
+    if (projs.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1.5rem; color: #777777; background: #0d0d0d; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1);"><p style="font-size:1.1rem; margin-bottom:0.5rem; color:#ffffff;">No projects yet</p><p style="font-size:0.85rem;">Click "Add New Project" above to create your first project.</p></div>';
+        return;
+    }
+
+    projs.forEach(proj => {
         grid.innerHTML += `<div class="project-card">
             <h4>${proj.name}</h4>
             <p class="client-name">Client: ${proj.client}</p>
@@ -482,7 +502,13 @@ function renderClients() {
     if (!tbody) return;
 
     tbody.innerHTML = '';
-    (appData.clients || []).forEach((client, i) => {
+    const clients = appData.clients || [];
+    if (clients.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:3rem; color:#666666;">No clients found. Click "Add Client" above to add one.</td></tr>';
+        return;
+    }
+
+    clients.forEach((client, i) => {
         tbody.innerHTML += `<tr>
             <td>${i + 1}</td>
             <td>${client.name}</td>
