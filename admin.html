@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEBZER - Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <h2>WEBZER ADMIN</h2>
+            <div id="loginError" class="error-msg"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" value="admin@webzer.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" value="admin123" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <a href="index.html" class="back-link">View Website &rarr;</a>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboard" class="admin-dashboard" style="display: none;">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>WEBZER</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul id="navList">
+                    <li class="active" data-target="page-dashboard">📊 Dashboard</li>
+                    <li data-target="page-enquiries">📩 Enquiries</li>
+                    <li data-target="page-projects">📁 Projects</li>
+                    <li data-target="page-clients">👥 Clients</li>
+                    <li data-target="page-settings">⚙️ Settings</li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline">Logout</button>
+                <p class="small-text">Admin Panel v1.0</p>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TOP BAR -->
+            <header class="top-bar">
+                <div class="mobile-toggle" id="mobileToggle">☰</div>
+                <h2 id="pageTitle">Dashboard</h2>
+                <div class="top-bar-right">
+                    <span>Welcome, Admin</span>
+                    <span class="bell-icon">🔔</span>
+                </div>
+            </header>
+
+            <div class="page-container">
+                <!-- PAGE: DASHBOARD -->
+                <div id="page-dashboard" class="page-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Enquiries</h3>
+                            <p id="stat-enquiries">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Projects</h3>
+                            <p id="stat-projects">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Clients</h3>
+                            <p id="stat-clients">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Revenue This Month</h3>
+                            <p id="stat-revenue">₹0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-tables">
+                        <div class="recent-section">
+                            <h3>Recent Enquiries</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Service</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-enquiries-body">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="recent-section">
+                            <h3>Recent Projects</h3>
+                            <ul class="recent-projects-list" id="recent-projects-list">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAGE: ENQUIRIES -->
+                <div id="page-enquiries" class="page-section" style="display: none;">
+                    <div class="page-header">
+                        <h3>All Enquiries</h3>
+                        <select id="enquiryFilter">
+                            <option value="All">All</option>
+                            <option value="New">New</option>
+                            <option value="Read">Read</option>
+                            <option value="Replied">Replied</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="enquiries-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAGE: PROJECTS -->
+                <div id="page-projects" class="page-section" style="display: none;">
+                    <div class="page-header">
+                        <h3>All Projects</h3>
+                        <button class="btn" id="addProjectBtn">Add New Project</button>
+                    </div>
+                    <div class="projects-grid" id="projects-grid">
+                    </div>
+                </div>
+
+                <!-- PAGE: CLIENTS -->
+                <div id="page-clients" class="page-section" style="display: none;">
+                    <div class="page-header">
+                        <h3>All Clients</h3>
+                        <button class="btn" id="addClientBtn">Add Client</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Projects</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAGE: SETTINGS -->
+                <div id="page-settings" class="page-section" style="display: none;">
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Business Info</h3>
+                            <form id="settingsBusinessForm">
+                                <div class="form-group">
+                                    <label>Company Name</label>
+                                    <input type="text" id="setCompany" value="WEBZER_SERVICES">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="setEmail" value="contact@webzer.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" id="setPhone" value="+91 9876543210">
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea id="setAddress">Mumbai, India</textarea>
+                                </div>
+                                <button type="submit" class="btn" style="margin-top:20px;">Save Settings</button>
+                            </form>
+                        </div>
+                        <div class="settings-card">
+                            <h3>Social Links & Security</h3>
+                            <form id="settingsSocialForm">
+                                <div class="form-group">
+                                    <label>Instagram</label>
+                                    <input type="text" id="setInsta" value="@webzer_services">
+                                </div>
+                                <div class="form-group">
+                                    <label>WhatsApp</label>
+                                    <input type="text" id="setWa" value="+919876543210">
+                                </div>
+                                <h3 style="margin-top:20px; margin-bottom:10px;">Change Password</h3>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="setNewPwd">
+                                </div>
+                                <button type="submit" class="btn" style="margin-top:20px;">Save Security Info</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Enquiry Modal -->
+    <div id="enquiryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Enquiry Details</h3>
+            <div id="enquiryDetailsContent"></div>
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn" id="markReadBtn">Mark as Read</button>
+                <button class="btn btn-outline" id="markRepliedBtn">Mark as Replied</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="projectModalTitle">Add New Project</h3>
+            <form id="projectForm">
+                <input type="hidden" id="projId">
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" id="projName" required>
+                </div>
+                <div class="form-group">
+                    <label>Client Name</label>
+                    <input type="text" id="projClient" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="projStatus">
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="On Hold">On Hold</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Progress (%)</label>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="range" id="projProgress" min="0" max="100" value="0" style="flex:1;">
+                        <span id="projProgressVal">0%</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="projStart" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="projDesc" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Save</button>
+                    <button type="button" class="btn btn-outline close-modal-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Modal -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="clientModalTitle">Add Client</h3>
+            <form id="clientForm">
+                <input type="hidden" id="clientId">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="clientEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="clientPhone">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Save</button>
+                    <button type="button" class="btn btn-outline close-modal-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
