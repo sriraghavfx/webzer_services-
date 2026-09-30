@@ -34,77 +34,27 @@ function hideModal(id) {
 const DEFAULT_CLIENT_DATA = {
     client: {
         name: 'Rahul Kumar',
-        email: 'rahul@example.com',
+        email: 'client@example.com',
         phone: '+91 98765 43210',
         company: 'Kumar Enterprises'
     },
-    projects: [
-        {
-            id: 1,
-            name: 'Business Website',
-            status: 'progress',
-            progress: 75,
-            startDate: '2026-09-01',
-            estimatedDelivery: '2026-10-15',
-            currentPhase: 'development',
-            description: 'Professional business website with modern design and mobile optimization.',
-            notes: 'Design approved. Frontend development in progress. Homepage, Services, and About sections completed.'
-        },
-        {
-            id: 2,
-            name: 'Logo & Brand Identity',
-            status: 'completed',
-            progress: 100,
-            startDate: '2026-08-15',
-            estimatedDelivery: '2026-09-01',
-            currentPhase: 'launch',
-            description: 'Professional logo design and complete branding guidelines for Kumar Enterprises.',
-            notes: 'Final assets delivered in SVG, PNG and PDF formats. Color guide shared.'
-        }
-    ],
-    messages: [
-        { id: 1, sender: 'webzer', text: 'Hi Rahul! Welcome to Webzer. We are excited to collaborate with you!', time: 'Sep 01, 10:00 AM' },
-        { id: 2, sender: 'client', text: 'Thank you! I need a fast and modern website for my business.', time: 'Sep 01, 10:15 AM' },
-        { id: 3, sender: 'webzer', text: 'Awesome! We have prepared the initial concept wireframe.', time: 'Sep 05, 02:30 PM' },
-        { id: 4, sender: 'webzer', text: 'The development phase is 75% complete. We are on track for delivery!', time: 'Sep 28, 11:00 AM' }
-    ],
-    invoices: [
-        {
-            id: 'INV-001',
-            project: 'Logo & Brand Identity',
-            amount: 15000,
-            date: '2026-08-15',
-            dueDate: '2026-08-30',
-            status: 'paid',
-            items: [
-                { service: 'Logo Design Concepts', description: '3 custom concept directions', amount: 10000 },
-                { service: 'Brand Guidelines', description: 'Color palette and typography guide', amount: 5000 }
-            ]
-        },
-        {
-            id: 'INV-002',
-            project: 'Business Website',
-            amount: 25000,
-            date: '2026-09-15',
-            dueDate: '2026-10-15',
-            status: 'pending',
-            items: [
-                { service: 'Modern Web UI Design', description: 'Responsive design for 5 pages', amount: 10000 },
-                { service: 'Frontend Development', description: 'HTML5, CSS3, JavaScript', amount: 12000 },
-                { service: 'On-Page SEO & Speed Optimization', description: 'Metadata & asset minification', amount: 3000 }
-            ]
-        }
-    ]
+    projects: [],
+    messages: [],
+    invoices: []
 };
 
 let clientData = {};
 
 // ── INITIALIZATION ──
 function initClientApp() {
-    if (!localStorage.getItem('webzer_client_data')) {
+    if (!localStorage.getItem('webzer_client_cleared_v3')) {
         saveClientData(DEFAULT_CLIENT_DATA);
+        localStorage.setItem('webzer_client_cleared_v3', 'true');
     }
     clientData = getClientData();
+    if (!clientData.projects) clientData.projects = [];
+    if (!clientData.messages) clientData.messages = [];
+    if (!clientData.invoices) clientData.invoices = [];
 
     // Check login state
     if (sessionStorage.getItem('webzer_client_logged') === 'true') {
@@ -318,31 +268,35 @@ function renderDashboard() {
     // Current Project Status Card
     const currentProj = clientData.projects.find(p => p.status === 'progress') || clientData.projects[0];
     const cardEl = document.getElementById('dashboardCurrentProject');
-    if (cardEl && currentProj) {
-        const phases = ['Idea', 'Design', 'Development', 'Review', 'Launch'];
-        const phaseIndex = currentProj.progress >= 100 ? 4 :
-                           currentProj.progress >= 75 ? 2 :
-                           currentProj.progress >= 50 ? 1 : 0;
+    if (cardEl) {
+        if (!currentProj) {
+            cardEl.innerHTML = '<p style="color:#777777; text-align:center; padding:1.5rem 0;">No active projects in progress.</p>';
+        } else {
+            const phases = ['Idea', 'Design', 'Development', 'Review', 'Launch'];
+            const phaseIndex = currentProj.progress >= 100 ? 4 :
+                               currentProj.progress >= 75 ? 2 :
+                               currentProj.progress >= 50 ? 1 : 0;
 
-        cardEl.innerHTML = `
-            <h4>${currentProj.name}</h4>
-            <p>${currentProj.description}</p>
-            <div class="progress-track" style="margin-top:1.25rem;">
-                <div class="progress-fill" style="width:${currentProj.progress}%"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-top:0.4rem;">
-                <span>Progress: ${currentProj.progress}%</span>
-                <span>Target: ${currentProj.estimatedDelivery}</span>
-            </div>
-            <div class="status-phases">
-                ${phases.map((name, i) => `
-                    <div class="phase-step ${i < phaseIndex ? 'completed' : i === phaseIndex ? 'active' : ''}">
-                        <div class="phase-dot">${i < phaseIndex ? '✓' : i + 1}</div>
-                        <div class="phase-label">${name}</div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+            cardEl.innerHTML = `
+                <h4>${currentProj.name}</h4>
+                <p>${currentProj.description}</p>
+                <div class="progress-track" style="margin-top:1.25rem;">
+                    <div class="progress-fill" style="width:${currentProj.progress}%"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-top:0.4rem;">
+                    <span>Progress: ${currentProj.progress}%</span>
+                    <span>Target: ${currentProj.estimatedDelivery}</span>
+                </div>
+                <div class="status-phases">
+                    ${phases.map((name, i) => `
+                        <div class="phase-step ${i < phaseIndex ? 'completed' : i === phaseIndex ? 'active' : ''}">
+                            <div class="phase-dot">${i < phaseIndex ? '✓' : i + 1}</div>
+                            <div class="phase-label">${name}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
     }
 
     // Recent Messages Preview
@@ -350,17 +304,21 @@ function renderDashboard() {
     if (previewEl) {
         previewEl.innerHTML = '';
         const recent = [...clientData.messages].slice(-3).reverse();
-        recent.forEach(m => {
-            previewEl.innerHTML += `
-                <div class="msg-preview-item">
-                    <div>
-                        <div class="msg-preview-sender">${m.sender === 'webzer' ? '⚡ Webzer Team' : '👤 You'}</div>
-                        <div class="msg-preview-text">${m.text}</div>
+        if (recent.length === 0) {
+            previewEl.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#777777; background:#0d0d0d; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">No messages yet.</div>';
+        } else {
+            recent.forEach(m => {
+                previewEl.innerHTML += `
+                    <div class="msg-preview-item">
+                        <div>
+                            <div class="msg-preview-sender">${m.sender === 'webzer' ? '⚡ Webzer Team' : '👤 You'}</div>
+                            <div class="msg-preview-text">${m.text}</div>
+                        </div>
+                        <div class="msg-preview-time">${m.time}</div>
                     </div>
-                    <div class="msg-preview-time">${m.time}</div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
     }
 }
 
@@ -369,6 +327,11 @@ function renderProjects() {
     const listEl = document.getElementById('projectsList');
     if (!listEl) return;
     listEl.innerHTML = '';
+
+    if (clientData.projects.length === 0) {
+        listEl.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1.5rem; color: #777777; background: #0d0d0d; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.1);"><p style="font-size:1.1rem; margin-bottom:0.5rem; color:#ffffff;">No projects yet</p><p style="font-size:0.85rem;">Active projects will appear here once assigned.</p></div>';
+        return;
+    }
 
     clientData.projects.forEach(p => {
         listEl.innerHTML += `
@@ -443,6 +406,11 @@ function renderInvoices() {
     const listEl = document.getElementById('invoicesList');
     if (!listEl) return;
     listEl.innerHTML = '';
+
+    if (clientData.invoices.length === 0) {
+        listEl.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2.5rem; color:#777777;">No invoices found.</td></tr>';
+        return;
+    }
 
     clientData.invoices.forEach(inv => {
         listEl.innerHTML += `
